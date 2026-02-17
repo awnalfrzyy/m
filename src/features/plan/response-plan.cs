@@ -1,3 +1,5 @@
+using diggie_server.src.features.plan;
+
 public record ResponsePlan(
     Guid Id,
     Guid ProductId,

@@ -1,3 +1,5 @@
+namespace diggie_server.src.features.plan;
+
 public enum PlanStatus
 {
     Active = 0,
