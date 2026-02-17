@@ -1,0 +1,6 @@
+@diggie_server_HostAddress = http://localhost:5124
+
+GET {{diggie_server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
