@@ -6,10 +6,13 @@ using System.Text;
 using System.Text.Json.Serialization;
 using diggie_server.src.shared.error;
 using diggie_server.src.infrastructure.persistence;
+using diggie_server.src.features.product;
 DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDatabaseContext>(options =>
+    options.UseSqlite(connectionString));
 
 builder.Services.AddDbContext<AppDatabaseContext>(options =>
 {
@@ -85,6 +88,9 @@ builder.Services.AddSwaggerGen();
 
 
 builder.Services.AddScoped<ErrorHandlerLogger>();
+builder.Services.AddScoped<AppDatabaseContext>();
+builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<CreateProduct>();
 
 var app = builder.Build();
 
@@ -97,8 +103,10 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "Moso API v1");
     });
 }
-
-app.UseHttpsRedirection();
+else
+{
+    app.UseHttpsRedirection();
+}
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
