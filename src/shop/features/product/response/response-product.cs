@@ -1,4 +1,4 @@
-using diggie_server.src.features.product;
+using diggie_server.src.features.product.entity;
 
 public record ResponseProduct(
     Guid Id,
@@ -9,5 +9,6 @@ public record ResponseProduct(
     decimal Price,
     int Quantity,
     ProductStatus Status,
-    DateTime CreatedAt
+    DateTime CreatedAt,
+    DateTime? DeleteAt
 );

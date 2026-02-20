@@ -1,3 +1,5 @@
+using diggie_server.src.infrastructure.persistence;
+
 namespace diggie_server.src.features.product;
 
 public class CreateProduct
@@ -24,15 +26,16 @@ public class CreateProduct
         await repository.AddAsync(product);
 
         return new ResponseProduct(
-     Id: product.Id,
-     Image: product.Image,
-     Name: product.Name,
-     Brand: product.Brand,
-     Description: product.Description,
-     Price: product.Price,
-     Quantity: product.Quantity,
-     Status: product.Status,
-     CreatedAt: product.CreatedAt
-     );
+            Id: product.Id,
+            Image: product.Image,
+            Name: product.Name,
+            Brand: product.Brand,
+            Description: product.Description,
+            Price: product.Price,
+            Quantity: product.Quantity,
+            Status: product.Status,
+            CreatedAt: product.CreatedAt,
+            DeleteAt: product.DeleteAt
+        );
     }
 }

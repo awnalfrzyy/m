@@ -6,7 +6,8 @@ using System.Text;
 using System.Text.Json.Serialization;
 using diggie_server.src.shared.error;
 using diggie_server.src.infrastructure.persistence;
-using diggie_server.src.features.product;
+using diggie_server.src.features.product.entity;
+using diggie_server.src.shop.features.product;
 DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -86,11 +87,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 builder.Services.AddScoped<ErrorHandlerLogger>();
 builder.Services.AddScoped<AppDatabaseContext>();
 builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<CreateProduct>();
+builder.Services.AddScoped<GetProduct>();
+builder.Services.AddScoped<UpdateProduct>();
+builder.Services.AddScoped<DeleteProduct>();
 
 var app = builder.Build();
 
