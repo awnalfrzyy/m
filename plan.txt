@@ -52,3 +52,8 @@
         └── 📁error
             ├── error-handler.cs
             └── exceptions.cs      <-- Custom Exception (e.g. ProductNotFoundException)
+
+
+             http-req POST http://localhost:5124/api/v1/auth/register \
+             -H "Content-Type: application/json" \
+             -b '{"email":"aswin@gmail.com", "name":"aswin", "password":"aswin1234"}'\

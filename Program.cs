@@ -12,6 +12,7 @@ using diggie_server.src.shop.features.product.get;
 using diggie_server.src.admin.features.product.create;
 using diggie_server.src.admin.features.product.delete;
 using diggie_server.src.admin.features.product.update;
+using diggie_server.src.identity.features.register;
 DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -89,12 +90,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ErrorHandlerLogger>();
 builder.Services.AddScoped<ProductRepository>();
+builder.Services.AddScoped<RepositoryUser>();
+
+builder.Services.AddScoped<ErrorHandlerLogger>();
 builder.Services.AddScoped<CreateProduct>();
 builder.Services.AddScoped<GetProduct>();
 builder.Services.AddScoped<UpdateProduct>();
 builder.Services.AddScoped<DeleteProduct>();
+builder.Services.AddScoped<RegisterHandler>();
 
 var app = builder.Build();
 

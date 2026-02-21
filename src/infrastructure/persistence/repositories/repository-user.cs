@@ -13,6 +13,15 @@ public class RepositoryUser
         _logger = logger;
     }
 
+    public async Task<EntityUser> CreateUser(EntityUser user)
+    {
+        _logger.LogDebug("Creating user {UserName}", user.Name);
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+        _logger.LogInformation("User {UserName} created", user.Name);
+        return user;
+    }
+
     public async Task<EntityUser?> GetUserByIdAsync(Guid id)
     {
         _logger.LogDebug("GetUserByIdAsync called for {UserId}", id);
