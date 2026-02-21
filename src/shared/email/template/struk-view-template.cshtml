@@ -1,0 +1,379 @@
+@model diggie_server.src.shared.email.models.StrukViewModel
+@{
+    Layout = null;
+    var year = DateTime.UtcNow.Year;
+    var orderNumber = $"DGG-{DateTime.UtcNow:yyyyMMdd}-{new Random().Next(1000, 9999)}";
+    var issuedAt = DateTime.UtcNow.ToString("dd MMM yyyy, HH:mm") + " UTC";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>@Model.AppName — Receipt</title>
+    <style>
+            @@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Unbounded:wght@400;700;900&display=swap');
+
+            body,
+            table,
+            td,
+            p,
+            a {
+                -webkit-text-size-adjust: 100%;
+                -ms-text-size-adjust: 100%;
+            }
+
+            table,
+            td {
+                mso-table-lspace: 0pt;
+                mso-table-rspace: 0pt;
+            }
+
+            @@media only screen and (max-width: 620px) {
+                .email-wrapper {
+                    padding: 0 !important;
+                }
+                .email-container {
+                    width: 100% !important;
+                    border-left: none !important;
+                    border-right: none !important;
+                }
+                .header-cell {
+                    padding: 18px 20px !important;
+                }
+
+                .app-name {
+                    font-size: 18px !important;
+                }
+                .badge {
+                    font-size: 8px !important;
+                    letter-spacing: 2px !important;
+                    padding: 3px 6px !important;
+                }
+                .section-pad {
+                    padding: 22px 20px !important;
+                }
+                .headline {
+                    font-size: 20px !important;
+                    letter-spacing: -0.5px !important;
+                }
+
+                .label-text {
+                    font-size: 9px !important;
+                }
+
+                .value-text {
+                    font-size: 12px !important;
+                }
+
+                .row-pad {
+                    padding: 10px 20px !important;
+                }
+                .total-amount {
+                    font-size: 28px !important;
+                    letter-spacing: 2px !important;
+                }
+                .total-pad {
+                    padding: 22px 20px !important;
+                }
+                .footer-cell {
+                    padding: 16px 20px !important;
+                }
+                .footer-text {
+                    font-size: 9px !important;
+                }
+                .footer-right {
+                    display: block !important;
+                    text-align: left !important;
+                    padding-left: 0 !important;
+                    padding-top: 6px !important;
+                }
+                .status-badge {
+                    font-size: 9px !important;
+                    padding: 4px 10px !important;
+                }
+            }
+    </style>
+</head>
+<body style="margin:0;padding:0;background:#f0f0f0;font-family:'Space Mono',Courier,monospace;">
+
+    <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0"
+           style="background:#f0f0f0;padding:50px 16px;">
+        <tr>
+            <td align="center">
+
+                <table class="email-container" width="600" cellpadding="0" cellspacing="0" border="0"
+                       style="width:600px;max-width:600px;border:2px solid #000;background:#fff;">
+
+                    <!-- ░░ HEADER ░░ -->
+                    <tr>
+                        <td class="header-cell" style="background:#000;padding:22px 36px;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td>
+                                        <span class="app-name"
+                                              style="font-family:'Unbounded',sans-serif;font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px;">
+                                            @Model.AppName
+                                        </span>
+                                    </td>
+                                    <td align="right" style="vertical-align:middle;">
+                                        <span class="badge"
+                                              style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#fff;letter-spacing:3px;text-transform:uppercase;border:1px solid rgba(255,255,255,0.35);padding:4px 8px;white-space:nowrap;">
+                                            RECEIPT
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- ░░ SPLIT RULE ░░ -->
+                    <tr>
+                        <td style="padding:0;line-height:0;font-size:0;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td width="50%" style="height:4px;background:#000;font-size:0;line-height:0;">&nbsp;
+                                    </td>
+                                    <td width="50%"
+                                        style="height:4px;background:#fff;border-top:2px solid #000;font-size:0;line-height:0;">
+                                        &nbsp;</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- ░░ INTRO ░░ -->
+                        <tr>
+                            <td class="section-pad" style="padding:32px 36px 0 36px;">
+                                <p
+                                    style="margin:0 0 6px 0;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:3px;color:#999;text-transform:uppercase;">
+                                    Payment Confirmed
+                                </p>
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                    <tr>
+                                        <td>
+                                            <p class="headline"
+                                                   style="margin:0;font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900;color:#000;line-height:1.2;letter-spacing:-1px;">
+                                                Thank you,<br />@Model.Name.Split(' ')[0].
+                                            </p>
+                                        </td>
+                                        <td align="right" style="vertical-align:top;padding-top:4px;">
+                                            <span class="status-badge"
+                                                  style="display:inline-block;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#fff;background:#000;padding:6px 12px;white-space:nowrap;">
+                                                ✓ @Model.Status
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <p
+                                    style="margin:14px 0 0 0;font-family:'Space Mono',monospace;font-size:12px;line-height:1.8;color:#555;border-left:3px solid #000;padding-left:14px;">
+                                    Your order has been processed. Keep this receipt for your records.
+                                </p>
+                            </td>
+                        </tr>
+
+                        <!-- ░░ ORDER META ░░ -->
+                        <tr>
+                            <td class="section-pad" style="padding:24px 36px 0 36px;">
+                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                       style="border:2px solid #000;">
+                                    <tr>
+                                        <td width="50%"
+                                            style="padding:14px 16px;border-right:1px solid #000;border-bottom:1px solid #000;vertical-align:top;">
+                                            <p class="label-text"
+                                                   style="margin:0 0 4px 0;font-family:'Space Mono',monospace;font-size:9px;color:#999;letter-spacing:2px;text-transform:uppercase;">
+                                                Order No.</p>
+                                                <p class="value-text"
+                                                       style="margin:0;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:#000;">
+                                                    @orderNumber</p>
+                                                </td>
+                                                <td width="50%"
+                                                    style="padding:14px 16px;border-bottom:1px solid #000;vertical-align:top;">
+                                                    <p class="label-text"
+                                                           style="margin:0 0 4px 0;font-family:'Space Mono',monospace;font-size:9px;color:#999;letter-spacing:2px;text-transform:uppercase;">
+                                                        Issued At</p>
+                                                        <p class="value-text"
+                                                               style="margin:0;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:#000;">
+                                                            @issuedAt</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td width="50%"
+                                                            style="padding:14px 16px;border-right:1px solid #000;vertical-align:top;">
+                                                            <p class="label-text"
+                                                                   style="margin:0 0 4px 0;font-family:'Space Mono',monospace;font-size:9px;color:#999;letter-spacing:2px;text-transform:uppercase;">
+                                                                Customer</p>
+                                                                <p class="value-text"
+                                                                       style="margin:0;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:#000;">
+                                                                    @Model.Name</p>
+                                                                </td>
+                                                                <td width="50%" style="padding:14px 16px;vertical-align:top;">
+                                                                    <p class="label-text"
+                                                                           style="margin:0 0 4px 0;font-family:'Space Mono',monospace;font-size:9px;color:#999;letter-spacing:2px;text-transform:uppercase;">
+                                                                        Payment</p>
+                                                                        <p class="value-text"
+                                                                               style="margin:0;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:#000;">
+                                                                            @Model.Payments</p>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+
+                                                        <!-- ░░ ITEM TABLE ░░ -->
+                                                        <tr>
+                                                            <td class="section-pad" style="padding:24px 36px 0 36px;">
+                                                                <!-- Table Header -->
+                                                                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                                                       style="border:2px solid #000;border-bottom:none;">
+                                                                    <tr style="background:#000;">
+                                                                        <td style="padding:10px 14px;">
+                                                                            <p class="label-text"
+                                                                                   style="margin:0;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#fff;letter-spacing:2px;text-transform:uppercase;">
+                                                                                Item</p>
+                                                                            </td>
+                                                                            <td align="center" style="padding:10px 14px;border-left:1px solid #333;">
+                                                                                <p class="label-text"
+                                                                                       style="margin:0;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#fff;letter-spacing:2px;text-transform:uppercase;">
+                                                                                    Qty</p>
+                                                                                </td>
+                                                                                <td align="right" style="padding:10px 14px;border-left:1px solid #333;">
+                                                                                    <p class="label-text"
+                                                                                           style="margin:0;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#fff;letter-spacing:2px;text-transform:uppercase;">
+                                                                                        Price</p>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                            <!-- Item Row -->
+                                                                            <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                                                                   style="border:2px solid #000;border-bottom:none;">
+                                                                                <tr>
+                                                                                    <td style="padding:16px 14px;border-bottom:1px solid #000;vertical-align:top;">
+                                                                                        <p
+                                                                                            style="margin:0 0 3px 0;font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:#000;">
+                                                                                            @Model.Product</p>
+                                                                                            <p class="label-text"
+                                                                                                   style="margin:0;font-family:'Space Mono',monospace;font-size:10px;color:#888;">
+                                                                                                @Model.Brand &nbsp;·&nbsp; @Model.Plan</p>
+                                                                                            </td>
+                                                                                            <td align="center"
+                                                                                                style="padding:16px 14px;border-left:1px solid #000;border-bottom:1px solid #000;vertical-align:middle;">
+                                                                                                <span class="value-text"
+                                                                                                      style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#000;">@Model.Quantity</span>
+                                                                                            </td>
+                                                                                            <td align="right"
+                                                                                                style="padding:16px 14px;border-left:1px solid #000;border-bottom:1px solid #000;vertical-align:middle;white-space:nowrap;">
+                                                                                                <span class="value-text"
+                                                                                                      style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#000;">Rp
+                                                                                                    @Model.Price.ToString("N0")</span>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <!-- Active Until -->
+                                                                                            <tr>
+                                                                                                <td colspan="2" style="padding:12px 14px;border-bottom:1px solid #eee;">
+                                                                                                    <p class="label-text"
+                                                                                                           style="margin:0;font-family:'Space Mono',monospace;font-size:9px;color:#999;letter-spacing:2px;text-transform:uppercase;">
+                                                                                                        Active Until</p>
+                                                                                                        <p class="value-text"
+                                                                                                               style="margin:4px 0 0 0;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:#000;">
+                                                                                                            @Model.Duration.ToString("dd MMM yyyy")</p>
+                                                                                                        </td>
+                                                                                                        <td align="right"
+                                                                                                            style="padding:12px 14px;border-left:1px solid #000;border-bottom:1px solid #eee;vertical-align:middle;">
+                                                                                                            <span
+                                                                                                                style="font-family:'Space Mono',monospace;font-size:9px;color:#999;letter-spacing:1px;text-transform:uppercase;">30
+                                                                                                                days</span>
+                                                                                                            </td>
+                                                                                                        </tr>
+                                                                                                    </table>
+                                                                                                    <!-- Total Row -->
+                                                                                                    <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                                                                                           style="border:2px solid #000;background:#000;">
+                                                                                                        <tr>
+                                                                                                            <td style="padding:14px 14px;">
+                                                                                                                <p class="label-text"
+                                                                                                                       style="margin:0;font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:#888;letter-spacing:2px;text-transform:uppercase;">
+                                                                                                                    Total Paid</p>
+                                                                                                                </td>
+                                                                                                                <td align="right" style="padding:14px 14px;">
+                                                                                                                    <span class="value-text"
+                                                                                                                          style="font-family:'Unbounded',sans-serif;font-size:16px;font-weight:900;color:#fff;letter-spacing:-0.5px;">
+                                                                                                                        Rp @Model.Price.ToString("N0")
+                                                                                                                    </span>
+                                                                                                                </td>
+                                                                                                            </tr>
+                                                                                                        </table>
+                                                                                                    </td>
+                                                                                                </tr>
+
+                                                                                                <!-- ░░ TOTAL BIG ░░ -->
+                                                                                                <tr>
+                                                                                                    <td class="total-pad" style="padding:28px 36px;">
+                                                                                                        <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                                                                                               style="border:2px solid #000;">
+                                                                                                            <tr>
+                                                                                                                <td width="5" style="background:#000;font-size:0;line-height:0;">&nbsp;</td>
+                                                                                                                <td style="padding:20px 18px;">
+                                                                                                                    <p class="label-text"
+                                                                                                                           style="margin:0 0 6px 0;font-family:'Space Mono',monospace;font-size:9px;color:#999;letter-spacing:3px;text-transform:uppercase;">
+                                                                                                                        Amount Charged</p>
+                                                                                                                        <span class="total-amount"
+                                                                                                                              style="font-family:'Unbounded',sans-serif;font-size:36px;font-weight:900;color:#000;letter-spacing:-1px;display:block;line-height:1;">
+                                                                                                                            Rp @Model.Price.ToString("N0")
+                                                                                                                        </span>
+                                                                                                                        <p
+                                                                                                                            style="margin:10px 0 0 0;font-family:'Space Mono',monospace;font-size:10px;color:#777;">
+                                                                                                                            via @Model.Payments &nbsp;·&nbsp; @Model.Plan
+                                                                                                                        </p>
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                            </table>
+                                                                                                        </td>
+                                                                                                    </tr>
+
+                                                                                                    <!-- ░░ NOTE ░░ -->
+                                                                                                    <tr>
+                                                                                                        <td style="padding:0 36px 28px 36px;">
+                                                                                                            <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                                                                                                                   style="border:2px solid #000;">
+                                                                                                                <tr>
+                                                                                                                    <td width="5" style="background:#000;font-size:0;line-height:0;">&nbsp;</td>
+                                                                                                                    <td
+                                                                                                                        style="padding:12px 14px;font-family:'Space Mono',monospace;font-size:11px;color:#000;line-height:1.7;">
+                                                                                                                        ℹ&nbsp; Questions about your order? Reply to this email or contact support.
+                                                                                                                        Include your order number <strong>@orderNumber</strong>.
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                            </table>
+                                                                                                        </td>
+                                                                                                    </tr>
+
+                                                                                                    <!-- ░░ FOOTER ░░ -->
+                                                                                                    <tr>
+                                                                                                        <td class="footer-cell" style="border-top:2px solid #000;background:#000;padding:18px 36px;">
+                                                                                                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                                                                <tr>
+                                                                                                                    <td class="footer-text"
+                                                                                                                        style="font-family:'Space Mono',monospace;font-size:10px;color:#888;line-height:1.6;">
+                                                                                                                        This is an automated receipt. Please do not reply directly.
+                                                                                                                    </td>
+                                                                                                                    <td class="footer-right footer-text" align="right"
+                                                                                                                        style="font-family:'Space Mono',monospace;font-size:10px;color:#555;white-space:nowrap;padding-left:16px;">
+                                                                                                                        © @year @Model.AppName
+                                                                                                                    </td>
+                                                                                                                </tr>
+                                                                                                            </table>
+                                                                                                        </td>
+                                                                                                    </tr>
+
+                                                                                                </table>
+
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    </table>
+
+                                                                                </body>
+
+                                                                            </html>

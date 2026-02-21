@@ -1,39 +1,58 @@
 using System.Net;
 using System.Net.Mail;
+using RazorLight;
 
-namespace diggie_server.src.shared.email;
-
-public class EmailService
+public interface IEmailService
 {
-    // private readonly IConfiguration _config;
+    Task<bool> SendAsync(string toEmail, string subject, object model, string templateName);
+}
 
-    // public EmailService(IConfiguration config)
-    // {
-    //     _config = config;
-    // }
+public class EmailService : IEmailService
+{
+    private readonly ILogger<EmailService> _logger;
+    private readonly IRazorLightEngine _engine;
 
-    public async Task SendAsync(string to, string subject, string body)
+    public EmailService(ILogger<EmailService> logger, IRazorLightEngine engine)
     {
-        var smtp = new SmtpClient
-        {
-            Host = Environment.GetEnvironmentVariable("SMTP_HOST")!,
-            Port = int.Parse(Environment.GetEnvironmentVariable("SMTP_PORT")!),
-            EnableSsl = true,
-            Credentials = new NetworkCredential(
-                Environment.GetEnvironmentVariable("SMTP_USER"),
-                Environment.GetEnvironmentVariable("SMTP_PASS")
-            )
-        };
+        _logger = logger;
+        _engine = engine;
+    }
 
-        var message = new MailMessage
+    public async Task<bool> SendAsync(string to, string subject, object model, string templateName)
+    {
+        try
         {
-            From = new MailAddress(Environment.GetEnvironmentVariable("SMTP_FROM")!),
-            Subject = subject,
-            Body = body,
-            IsBodyHtml = true
-        };
 
-        message.To.Add(to);
-        await smtp.SendMailAsync(message);
+            string body = await _engine.CompileRenderAsync($"{templateName}.cshtml", model);
+
+            using var smtp = new SmtpClient
+            {
+                Host = Environment.GetEnvironmentVariable("SMTP_HOST")!,
+                Port = int.Parse(Environment.GetEnvironmentVariable("SMTP_PORT") ?? "587"),
+                EnableSsl = true,
+                Credentials = new NetworkCredential(
+                    Environment.GetEnvironmentVariable("SMTP_USER"),
+                    Environment.GetEnvironmentVariable("SMTP_PASS")
+                )
+            };
+
+            var message = new MailMessage
+            {
+                From = new MailAddress(Environment.GetEnvironmentVariable("SMTP_FROM")!, "Diggie Server"),
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            message.To.Add(to);
+
+            await smtp.SendMailAsync(message);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Gagal kirim email {Template}", templateName);
+            return false;
+        }
     }
 }

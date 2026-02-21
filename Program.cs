@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Asp.Versioning;
 using System.Text;
@@ -13,11 +12,21 @@ using diggie_server.src.admin.features.product.create;
 using diggie_server.src.admin.features.product.delete;
 using diggie_server.src.admin.features.product.update;
 using diggie_server.src.identity.features.register;
+using diggie_server.src.identity.features.login;
+using diggie_server.src.infrastructure.auth.jwt;
+using diggie_server.src.identity.features.otp.send;
+using RazorLight;
+using diggie_server.src.identity.features.otp;
 DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
+var templatePath = Path.Combine(AppContext.BaseDirectory, "Templates");
+var engine = new RazorLightEngineBuilder()
+    .UseFileSystemProject(templatePath) // Cukup folder-nya saja
+    .UseMemoryCachingProvider()
+    .Build();
+builder.Services.AddSingleton<IRazorLightEngine>(engine);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Information);
@@ -31,9 +40,9 @@ builder.Services.AddControllers()
     });
 
 var jwtSection = builder.Configuration.GetSection("Jwt");
-var jwtSecret = "Secret";
-var jwtIssuer = "Issuer";
-var jwtAudience = "Audience";
+var jwtSecret = builder.Configuration["JWT_SECRET"] ?? string.Empty;
+var jwtIssuer = builder.Configuration["JWT_ISSUER"] ?? string.Empty;
+var jwtAudience = builder.Configuration["JWT_AUDIENCE"] ?? string.Empty;
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -42,8 +51,7 @@ builder.Services
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey =
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
 
             ValidateIssuer = true,
             ValidIssuer = jwtIssuer,
@@ -53,6 +61,19 @@ builder.Services
 
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var token = context.Request.Cookies["X-Access-Token"];
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Token = token;
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -92,13 +113,23 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<RepositoryUser>();
+builder.Services.AddScoped<RepositoryOtp>();
+
+builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<JwtStrategy>();
 
 builder.Services.AddScoped<ErrorHandlerLogger>();
+
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 builder.Services.AddScoped<CreateProduct>();
 builder.Services.AddScoped<GetProduct>();
 builder.Services.AddScoped<UpdateProduct>();
 builder.Services.AddScoped<DeleteProduct>();
 builder.Services.AddScoped<RegisterHandler>();
+builder.Services.AddScoped<LoginHandler>();
+builder.Services.AddScoped<SendOTPHandler>();
+builder.Services.AddScoped<SendStrukHandler>();
 
 var app = builder.Build();
 
@@ -116,6 +147,8 @@ else
     app.UseHttpsRedirection();
 }
 app.UseCors("AllowFrontend");
+
+app.UseMiddleware<diggie_server.src.infrastructure.auth.guard.JwtGuardMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

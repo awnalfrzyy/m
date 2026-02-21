@@ -56,4 +56,5 @@
 
              http-req POST http://localhost:5124/api/v1/auth/register \
              -H "Content-Type: application/json" \
-             -b '{"email":"aswin@gmail.com", "name":"aswin", "password":"aswin1234"}'\
+             -H "Authorization: Bearer secret_token" \
+             -b '{"email":"aswin@gmail.com", "name":"aswin", "password":"aswin1234"}'

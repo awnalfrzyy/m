@@ -1,4 +1,5 @@
 using diggie_server.src.infrastructure.persistence.entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace diggie_server.src.infrastructure.persistence.repositories;
 
@@ -20,6 +21,15 @@ public class RepositoryUser
         await _context.SaveChangesAsync();
         _logger.LogInformation("User {UserName} created", user.Name);
         return user;
+    }
+
+    public async Task<EntityUser?> GetByEmailAsync(string email)
+    {
+        _logger.LogDebug("GetUserByEmailAsync called for email {Email}", email);
+        return await _context.Users
+        .AsNoTracking()
+        .Where(u => u.DeleteAt == null)
+        .FirstOrDefaultAsync(u => u.Email == email);
     }
 
     public async Task<EntityUser?> GetUserByIdAsync(Guid id)

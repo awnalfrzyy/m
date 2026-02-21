@@ -13,6 +13,8 @@ public enum StatusUser
     Inactive
 }
 
+
+
 public class EntityUser
 {
     public Guid Id { get; set; }
@@ -23,4 +25,9 @@ public class EntityUser
     public StatusUser Status { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? DeleteAt { get; set; }
+
+    public bool IsPasswordValid(string password)
+    {
+        return BCrypt.Net.BCrypt.Verify(password, this.Password);
+    }
 }

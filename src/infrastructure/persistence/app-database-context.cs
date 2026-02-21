@@ -15,6 +15,7 @@ namespace diggie_server.src.infrastructure.persistence
         public DbSet<EntityProduct> Products { get; set; }
         public DbSet<EntityPlan> Plans { get; set; }
         public DbSet<EntityUser> Users { get; set; }
+        public DbSet<EntityOtp> Otps { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -64,6 +65,19 @@ namespace diggie_server.src.infrastructure.persistence
                     .HasDefaultValueSql("CURRENT_TIMESTAMP")
                     .ValueGeneratedOnAdd();
                 entity.Property(e => e.DeleteAt).IsRequired(false);
+            });
+            modelBuilder.Entity<EntityOtp>(entity =>
+            {
+                entity.HasKey(e => e.Email);
+                entity.Property(e => e.Email).IsRequired();
+                entity.Property(e => e.Code).IsRequired();
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.ExpiredAt).IsRequired();
+                entity.Property(e => e.Status)
+                    .HasConversion<string>()
+                    .HasDefaultValue(OtpStatus.Pending);
             });
         }
 
