@@ -1,26 +1,28 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Asp.Versioning;
 using System.Text;
 using System.Text.Json.Serialization;
 using diggie_server.src.shared.error;
 using diggie_server.src.infrastructure.persistence;
-using diggie_server.src.features.product.entity;
-using diggie_server.src.shop.features.product;
+using diggie_server.src.infrastructure.persistence.repositories;
+using diggie_server.src.shop.features.product.get;
+using diggie_server.src.admin.features.product.create;
+using diggie_server.src.admin.features.product.delete;
+using diggie_server.src.admin.features.product.update;
 DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AppDatabaseContext>(options =>
-    options.UseSqlite(connectionString));
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 builder.Services.AddDbContext<AppDatabaseContext>(options =>
-{
-    options.UseSqlite(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    );
-});
+    options.UseSqlite(connectionString));
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -88,7 +90,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ErrorHandlerLogger>();
-builder.Services.AddScoped<AppDatabaseContext>();
 builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<CreateProduct>();
 builder.Services.AddScoped<GetProduct>();

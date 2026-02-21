@@ -1,13 +1,14 @@
-using diggie_server.src.infrastructure.persistence;
+using diggie_server.src.infrastructure.persistence.entities;
+using diggie_server.src.infrastructure.persistence.repositories;
 
-namespace diggie_server.src.shop.features.product;
+namespace diggie_server.src.admin.features.product.update;
 
 public class UpdateProduct
 {
     private readonly ProductRepository repository;
     public UpdateProduct(ProductRepository repository) => this.repository = repository;
 
-    public async Task<ResponseProduct> HandleAsync(UpdateRequestProduct request, Guid id)
+    public async Task<UpdateProductResponse> HandleAsync(UpdateRequestProduct request, Guid id)
     {
         var product = await repository.GetByIdAsync(id);
         if (product == null) throw new Exception("Product tidak ditemukan");
@@ -31,7 +32,7 @@ public class UpdateProduct
         await repository.UpdateByIdAsync(id, product);
 
 
-        return new ResponseProduct(
+        return new UpdateProductResponse(
             Id: product.Id,
             Image: product.Image,
             Name: product.Name,

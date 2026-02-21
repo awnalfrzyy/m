@@ -1,4 +1,4 @@
-namespace diggie_server.src.features.product;
+namespace diggie_server.src.infrastructure.persistence.entities;
 
 public enum ProductStatus
 {

@@ -1,6 +1,7 @@
-using diggie_server.src.infrastructure.persistence;
+using diggie_server.src.infrastructure.persistence.entities;
+using diggie_server.src.infrastructure.persistence.repositories;
 
-namespace diggie_server.src.features.product;
+namespace diggie_server.src.admin.features.product.create;
 
 public class CreateProduct
 {
@@ -8,7 +9,7 @@ public class CreateProduct
 
     public CreateProduct(ProductRepository repository) => this.repository = repository;
 
-    public async Task<ResponseProduct> Handle(RequestProduct request)
+    public async Task<CreateProductResponse> Handle(CreateProductRequest request)
     {
         var product = new EntityProduct
         {
@@ -25,7 +26,7 @@ public class CreateProduct
 
         await repository.AddAsync(product);
 
-        return new ResponseProduct(
+        return new CreateProductResponse(
             Id: product.Id,
             Image: product.Image,
             Name: product.Name,

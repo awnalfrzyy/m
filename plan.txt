@@ -1,0 +1,54 @@
+└── 📁src
+    ├── 📁infrastructure            <-- Logic Teknis (Non-Bisnis)
+    │   ├── 📁persistence
+    │   │   ├── app-database-context.cs
+    │   │   ├── 📁entities         <-- Core Data (Product, User, Audit, MarketPrice, Order)
+    │   │   └── 📁repositories     <-- Abstraksi DB (IProductRepo, IAuditRepo, dll.)
+    │   ├── 📁auth
+    │   │   ├── jwt-service.cs
+    │   │   └── jwt-strategy.cs
+    │   └── 📁storage
+    │       └── image-service.cs   <-- Handle fisik file (Save/Delete di wwwroot)
+    │
+    ├── 📁identity                  <-- Modul Autentikasi & User Access
+    │   └── 📁features
+    │       ├── 📁login
+    │       ├── 📁register
+    │       └── 📁otp
+    │           ├── send-otp.cs
+    │           └── verify-otp.cs
+    │
+    ├── 📁admin                     <-- MODUL ADMIN (Write Side / Commands)
+    │   └── 📁features
+    │       └── 📁product
+    │           ├── admin-product-controller.cs  <-- [HttpPost], [HttpPatch], [HttpDelete]
+    │           ├── create-product.cs
+    │           ├── update-product.cs
+    │           └── delete-product.cs
+    │
+    ├── 📁shop                      <-- MODUL SHOP (Read Side / Queries + Customer Actions)
+    │   └── 📁features
+    │       ├── 📁catalog
+    │       │   ├── shop-product-controller.cs   <-- [HttpGet] Only
+    │       │   ├── get-products.cs
+    │       │   └── get-product-detail.cs
+    │       ├── 📁profile
+    │       │   ├── profile-controller.cs
+    │       │   └── update-profile-photo.cs      <-- Panggil ImageService
+    │       └── 📁order
+    │           ├── order-controller.cs
+    │           ├── checkout.cs
+    │           └── get-order-history.cs
+    │
+    ├── 📁crawler                   <-- MODUL CRAWLER (Data Acquisition)
+    │   └── 📁tasks
+    │       ├── price-scraper.cs   <-- Tulis ke MarketPrices
+    │       └── news-aggregator.cs
+    │
+    └── 📁shared                    <-- Cross-Cutting Concerns
+        ├── 📁email
+        │   ├── 📁templates
+        │   └── service-email.cs
+        └── 📁error
+            ├── error-handler.cs
+            └── exceptions.cs      <-- Custom Exception (e.g. ProductNotFoundException)

@@ -1,6 +1,6 @@
-using diggie_server.src.features.product.entity;
+using diggie_server.src.infrastructure.persistence.entities;
 
-public record ResponseProduct(
+public record GetProductResponse(
     Guid Id,
     string Image,
     string Name,

@@ -1,4 +1,4 @@
-public record RequestProduct(
+public record CreateProductRequest(
     string Image,
     string Name,
     string Brand,

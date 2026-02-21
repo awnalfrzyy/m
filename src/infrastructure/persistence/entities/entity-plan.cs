@@ -1,4 +1,4 @@
-namespace diggie_server.src.features.plan;
+namespace diggie_server.src.infrastructure.persistence.entities;
 
 public enum PlanStatus
 {
@@ -11,8 +11,8 @@ public class EntityPlan
 {
     public Guid Id { get; set; }
     public Guid ProductId { get; set; }
-    public string Name { get; set; }
-    public string Durations { get; set; }
+    public required string Name { get; set; }
+    public required string Durations { get; set; }
     public decimal Price { get; set; }
     public PlanStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }

@@ -1,48 +1,32 @@
 using Microsoft.AspNetCore.Mvc;
 using Asp.Versioning;
-using diggie_server.src.features.product.entity;
-using diggie_server.src.shop.features.product;
+using diggie_server.src.admin.features.product.create;
+using diggie_server.src.admin.features.product.update;
+using diggie_server.src.admin.features.product.delete;
 
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/product")]
-public class ProductController : ControllerBase
+public class AdminProductController : ControllerBase
 {
     private readonly CreateProduct createProduct;
-    private readonly GetProduct getProduct;
     private readonly UpdateProduct updateProduct;
     private readonly DeleteProduct deleteProduct;
-    public ProductController(
+    public AdminProductController(
         CreateProduct createProduct,
-        GetProduct getProduct,
         UpdateProduct updateProduct,
         DeleteProduct deleteProduct
         )
     {
         this.createProduct = createProduct;
-        this.getProduct = getProduct;
         this.updateProduct = updateProduct;
         this.deleteProduct = deleteProduct;
     }
 
     [HttpPost("")]
-    public async Task<IActionResult> Create([FromBody] RequestProduct request)
+    public async Task<IActionResult> Create([FromBody] CreateProductRequest request)
     {
         var response = await createProduct.Handle(request);
-        return Ok(response);
-    }
-
-    [HttpGet("")]
-    public async Task<IActionResult> GetAll()
-    {
-        var response = await getProduct.GetAllAsync();
-        return Ok(response);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id)
-    {
-        var response = await getProduct.ExecuteAsync(id);
         return Ok(response);
     }
 

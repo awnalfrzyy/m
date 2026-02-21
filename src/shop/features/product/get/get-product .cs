@@ -1,6 +1,6 @@
-using diggie_server.src.infrastructure.persistence;
+using diggie_server.src.infrastructure.persistence.repositories;
 
-namespace diggie_server.src.shop.features.product;
+namespace diggie_server.src.shop.features.product.get;
 
 public class GetProduct
 {
@@ -10,10 +10,10 @@ public class GetProduct
         this.repository = repository;
     }
 
-    public async Task<ResponseProduct> ExecuteAsync(Guid id)
+    public async Task<GetProductResponse> ExecuteAsync(Guid id)
     {
         var product = await repository.GetByIdAsync(id);
-        return new ResponseProduct(
+        return new GetProductResponse(
             product.Id,
             product.Image,
             product.Name,
@@ -27,10 +27,10 @@ public class GetProduct
         );
     }
 
-    public async Task<IEnumerable<ResponseProduct>> GetAllAsync()
+    public async Task<IEnumerable<GetProductResponse>> GetAllAsync()
     {
         var products = await repository.GetAllAsync();
-        return products.Select(product => new ResponseProduct(
+        return products.Select(product => new GetProductResponse(
             product.Id,
             product.Image,
             product.Name,
