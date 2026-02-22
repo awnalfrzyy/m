@@ -18,7 +18,6 @@ using diggie_server.src.identity.features.otp.send;
 using RazorLight;
 using diggie_server.src.identity.features.otp;
 using diggie_server.src.identity.features.reset;
-using diggie_server.src.shared.validation;
 using diggie_server.src.identity.features.otp.verify;
 DotNetEnv.Env.Load();
 
@@ -26,7 +25,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 var templatePath = Path.Combine(AppContext.BaseDirectory, "Templates");
 var engine = new RazorLightEngineBuilder()
-    .UseFileSystemProject(templatePath) // Cukup folder-nya saja
+    .UseFileSystemProject(templatePath)
     .UseMemoryCachingProvider()
     .Build();
 builder.Services.AddSingleton<IRazorLightEngine>(engine);

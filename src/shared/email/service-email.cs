@@ -1,6 +1,7 @@
-using System.Net;
-using System.Net.Mail;
 using RazorLight;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 
 public interface IEmailService
 {
@@ -22,36 +23,40 @@ public class EmailService : IEmailService
     {
         try
         {
-
             string body = await _engine.CompileRenderAsync($"{templateName}.cshtml", model);
 
-            using var smtp = new SmtpClient
+            var message = new MimeMessage();
+            var fromAddress = Environment.GetEnvironmentVariable("SMTP_FROM") ?? "aswinalfarizi04@gmail.com";
+            message.From.Add(MailboxAddress.Parse(fromAddress));
+            message.To.Add(MailboxAddress.Parse(to));
+            message.Subject = subject;
+
+            var bodyBuilder = new BodyBuilder { HtmlBody = body };
+            message.Body = bodyBuilder.ToMessageBody();
+
+            using var client = new SmtpClient();
+
+            var host = Environment.GetEnvironmentVariable("SMTP_HOST")!;
+            if (string.IsNullOrEmpty(host))
             {
-                Host = Environment.GetEnvironmentVariable("SMTP_HOST")!,
-                Port = int.Parse(Environment.GetEnvironmentVariable("SMTP_PORT") ?? "587"),
-                EnableSsl = true,
-                Credentials = new NetworkCredential(
-                    Environment.GetEnvironmentVariable("SMTP_USER"),
-                    Environment.GetEnvironmentVariable("SMTP_PASS")
-                )
-            };
+                _logger.LogError("SMTP_HOST is not defined in Environment Variables!");
+                return false;
+            }
+            var port = int.Parse(Environment.GetEnvironmentVariable("SMTP_PORT") ?? "587");
+            var user = Environment.GetEnvironmentVariable("SMTP_USER");
+            var pass = Environment.GetEnvironmentVariable("SMTP_PASS");
 
-            var message = new MailMessage
-            {
-                From = new MailAddress(Environment.GetEnvironmentVariable("SMTP_FROM")!, "Diggie Server"),
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true
-            };
+            await client.ConnectAsync(host, port, SecureSocketOptions.StartTls);
+            await client.AuthenticateAsync(user, pass);
+            await client.SendAsync(message);
+            await client.DisconnectAsync(true);
 
-            message.To.Add(to);
-
-            await smtp.SendMailAsync(message);
+            _logger.LogInformation("Email {Template} terkirim ke {To}", templateName, to);
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Gagal kirim email {Template}", templateName);
+            _logger.LogError(ex, "Gagal kirim email {Template} ke {To}", templateName, to);
             return false;
         }
     }

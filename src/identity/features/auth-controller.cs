@@ -4,9 +4,6 @@ using diggie_server.src.identity.features.register;
 using diggie_server.src.identity.features.login;
 using Microsoft.AspNetCore.Authorization;
 using diggie_server.src.identity.features.otp.send;
-using diggie_server.src.identity.features.otp;
-using diggie_server.src.finance.features.receipt.send;
-using diggie_server.src.infrastructure.persistence.repositories;
 using diggie_server.src.identity.features.reset;
 using diggie_server.src.identity.features.otp.verify;
 
@@ -31,7 +28,6 @@ public class AuthController : ControllerBase
         IEmailService emailService,
         VerifyOtpHandler verifyOtpHandler
 
-     // RepositoryUser dihapus karena tidak digunakan di controller ini
      )
     {
         this.registerHandler = registerHandler;
@@ -54,13 +50,12 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        // Langsung pakai field loginHandler
         var result = await loginHandler.Handle(request);
 
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            Secure = true, // Pastikan pakai HTTPS saat production
+            Secure = true,
             SameSite = SameSiteMode.Strict,
             Expires = DateTime.UtcNow.AddHours(2)
         };
@@ -78,11 +73,9 @@ public class AuthController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpPost("reset-password/request")] // Step 1: Minta OTP
+    [HttpPost("reset-password/request")]
     public async Task<IActionResult> RequestReset([FromBody] SendOTPRequest request)
     {
-        // Di dalam SendOTPHandler, pastikan kamu cek dulu: user ada ga? 
-        // Kalau ga ada, langsung return false/throw error di Handler.
         var isSent = await sendOTPHandler.Handle(request);
 
         if (!isSent) return BadRequest(new { message = "Gagal mengirim OTP. Pastikan email terdaftar." });
@@ -106,7 +99,6 @@ public class AuthController : ControllerBase
     [HttpPost("reset-password/submit")]
     public async Task<IActionResult> SubmitNewPassword([FromBody] ResetRequest request)
     {
-        // Handler ini WAJIB cek ke tabel OTP: "Email ini statusnya sudah Verified belum?"
         var result = await resetHandler.Handle(request);
 
         if (!result) return BadRequest(new { message = "Gagal reset password. Pastikan OTP sudah diverifikasi." });
@@ -114,6 +106,7 @@ public class AuthController : ControllerBase
         return Ok(new { success = true, message = "Password changed successfully." });
     }
 }
+
 // [AllowAnonymous]
 // [HttpPost("send-struk")]
 // public async Task<IActionResult> SendStruk([FromBody] SendStrukRequest request)

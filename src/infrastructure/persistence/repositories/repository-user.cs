@@ -62,4 +62,18 @@ public class RepositoryUser
         _logger.LogInformation("User {UserId} updated", user.Id);
         return user;
     }
+
+    public async Task<bool> ExistsByEmailAsync(string email)
+    => await _context.Users.AnyAsync(u => u.Email == email);
+
+    public async Task<bool> ExistsByNameAsync(string name)
+        => await _context.Users.AnyAsync(u => u.Name == name);
+
+    public async Task<List<string>> GetSimilarNamesAsync(string baseName)
+    {
+        return await _context.Users
+            .Where(u => u.Name.StartsWith(baseName))
+            .Select(u => u.Name)
+            .ToListAsync();
+    }
 }
