@@ -8,15 +8,18 @@ using diggie_server.src.shared.error;
 using diggie_server.src.infrastructure.persistence;
 using diggie_server.src.infrastructure.persistence.repositories;
 using diggie_server.src.shop.features.product.get;
-using diggie_server.src.admin.features.product.create;
-using diggie_server.src.admin.features.product.delete;
-using diggie_server.src.admin.features.product.update;
+using diggie_server.src.shop.features.product.create;
+using diggie_server.src.shop.features.product.delete;
+using diggie_server.src.shop.features.product.update;
 using diggie_server.src.identity.features.register;
 using diggie_server.src.identity.features.login;
 using diggie_server.src.infrastructure.auth.jwt;
 using diggie_server.src.identity.features.otp.send;
 using RazorLight;
 using diggie_server.src.identity.features.otp;
+using diggie_server.src.identity.features.reset;
+using diggie_server.src.shared.validation;
+using diggie_server.src.identity.features.otp.verify;
 DotNetEnv.Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -130,6 +133,8 @@ builder.Services.AddScoped<RegisterHandler>();
 builder.Services.AddScoped<LoginHandler>();
 builder.Services.AddScoped<SendOTPHandler>();
 builder.Services.AddScoped<SendStrukHandler>();
+builder.Services.AddScoped<ResetHandler>();
+builder.Services.AddScoped<VerifyOtpHandler>();
 
 var app = builder.Build();
 

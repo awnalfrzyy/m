@@ -1,5 +1,6 @@
 using diggie_server.src.infrastructure.persistence.repositories;
 using diggie_server.src.infrastructure.auth.jwt;
+using diggie_server.src.shared.validation;
 
 namespace diggie_server.src.identity.features.login;
 
@@ -18,7 +19,11 @@ public class LoginHandler
 
     public async Task<(LoginResponse response, string token)> Handle(LoginRequest request)
     {
+
+        ValidationGuard.ValidateAuth(request.email, request.password);
+
         _logger.LogDebug("Attempting login for email {Email}", request.email);
+
         var user = await _repositoryUser.GetByEmailAsync(request.email);
         if (user == null || !user.IsPasswordValid(request.password))
         {

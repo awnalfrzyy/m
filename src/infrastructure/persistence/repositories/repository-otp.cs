@@ -27,6 +27,12 @@ namespace diggie_server.src.infrastructure.persistence.repositories
             .FirstOrDefaultAsync(x => x.Email == email);
         }
 
+        public async Task<EntityOtp?> GetByEmailAsync(string email)
+        {
+            return await _context.Otps
+                .FirstOrDefaultAsync(x => x.Email == email);
+        }
+
         public async Task<EntityOtp?> GetActiveOtpAsync(string email, string code)
         {
             return await _context.Otps
@@ -65,6 +71,13 @@ namespace diggie_server.src.infrastructure.persistence.repositories
         {
             _context.Otps.Update(otp);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<EntityOtp> DeleteAsync(EntityOtp otp)
+        {
+            _context.Otps.Remove(otp);
+            await _context.SaveChangesAsync();
+            return otp;
         }
     }
 }

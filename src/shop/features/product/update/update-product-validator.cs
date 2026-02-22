@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace diggie_server.src.features.product.validator;
+namespace diggie_server.src.shop.features.product.validator;
 
 public class UpdateProductValidator : AbstractValidator<UpdateRequestProduct>
 {

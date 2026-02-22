@@ -1,7 +1,7 @@
 using diggie_server.src.infrastructure.persistence.entities;
 using diggie_server.src.infrastructure.persistence.repositories;
 
-namespace diggie_server.src.admin.features.product.create;
+namespace diggie_server.src.shop.features.product.create;
 
 public class CreateProduct
 {

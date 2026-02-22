@@ -44,4 +44,22 @@ public class RepositoryUser
         return user;
     }
 
+    public async Task<bool> IsEmailExists(string email)
+    {
+        _logger.LogDebug("Checking if email exists: {Email}", email);
+        var user = await _context.Users
+            .AsNoTracking()
+            .Where(u => u.DeleteAt == null)
+            .FirstOrDefaultAsync(u => u.Email == email);
+        return user != null;
+    }
+
+    public async Task<EntityUser> UpdateAsync(EntityUser user)
+    {
+        _logger.LogDebug("Updating user {UserId}", user.Id);
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+        _logger.LogInformation("User {UserId} updated", user.Id);
+        return user;
+    }
 }
