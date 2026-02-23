@@ -14,16 +14,9 @@ public class GetProduct
     {
         var product = await repository.GetByIdAsync(id);
         return new GetProductResponse(
-            product.Id,
             product.Image,
             product.Name,
-            product.Brand,
-            product.Description,
-            product.Price,
-            product.Quantity,
-            product.Status,
-            product.CreatedAt,
-            product.DeleteAt
+            product.Price
         );
     }
 
@@ -31,16 +24,9 @@ public class GetProduct
     {
         var products = await repository.GetAllAsync();
         return products.Select(product => new GetProductResponse(
-            product.Id,
             product.Image,
             product.Name,
-            product.Brand,
-            product.Description,
-            product.Price,
-            product.Quantity,
-            product.Status,
-            product.CreatedAt,
-            product.DeleteAt
+            product.Price
         ));
     }
 }

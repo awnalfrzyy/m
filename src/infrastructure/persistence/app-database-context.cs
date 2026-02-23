@@ -4,18 +4,22 @@ namespace diggie_server.src.infrastructure.persistence
 {
     public class AppDatabaseContext : DbContext
     {
-        private readonly ILogger<AppDatabaseContext>? _logger;
+        private readonly ILogger<AppDatabaseContext>? logger;
 
         public AppDatabaseContext(DbContextOptions<AppDatabaseContext> options, ILogger<AppDatabaseContext>? logger = null)
             : base(options)
         {
-            _logger = logger;
+            this.logger = logger;
         }
 
         public DbSet<EntityProduct> Products { get; set; }
         public DbSet<EntityPlan> Plans { get; set; }
         public DbSet<EntityUser> Users { get; set; }
         public DbSet<EntityOtp> Otps { get; set; }
+        public DbSet<EntityOrder> Orders { get; set; }
+        public DbSet<EntityOrderItem> OrderItems { get; set; }
+        public DbSet<EntityHistory> History { get; set; }
+        public DbSet<EntityCart> Carts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -79,36 +83,93 @@ namespace diggie_server.src.infrastructure.persistence
                     .HasConversion<string>()
                     .HasDefaultValue(OtpStatus.Pending);
             });
+            modelBuilder.Entity<EntityOrder>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.TotalAmount).HasPrecision(18, 2);
+                entity.Property(e => e.Status)
+                     .HasConversion<string>()
+                     .HasDefaultValue(OrderStatus.Pending);
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.DeleteAt).IsRequired(false);
+            });
+            modelBuilder.Entity<EntityOrderItem>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.OrderId).IsRequired();
+                entity.Property(e => e.ProductId).IsRequired();
+                entity.Property(e => e.Quantity).IsRequired();
+                entity.Property(e => e.PriceAtPurchase).IsRequired();
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.DeleteAt).IsRequired(false);
+            });
+
+
+            modelBuilder.Entity<EntityHistory>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.Product).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.Quantity).IsRequired();
+                entity.Property(e => e.MetodePayments).IsRequired().HasMaxLength(255);
+                entity.Property(e => e.Price).HasPrecision(18, 2);
+                entity.Property(e => e.Status)
+                    .HasConversion<string>()
+                    .HasDefaultValue(StatusPayments.Pending);
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.DeleteAt).IsRequired(false);
+            });
+            modelBuilder.Entity<EntityCart>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.UserId).IsRequired();
+                entity.Property(e => e.ProductId).IsRequired();
+                entity.Property(e => e.Quantity).IsRequired();
+                entity.Property(e => e.AddedAt)
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                    .ValueGeneratedOnAdd();
+                entity.Property(e => e.DeleteAt).IsRequired(false);
+            });
+
         }
 
         public override int SaveChanges()
         {
-            _logger?.LogDebug("SaveChanges called");
+            logger?.LogDebug("SaveChanges called");
             try
             {
                 var result = base.SaveChanges();
-                _logger?.LogInformation("SaveChanges completed, {Count} entries written.", result);
+                logger?.LogInformation("SaveChanges completed, {Count} entries written.", result);
                 return result;
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "SaveChanges failed");
+                logger?.LogError(ex, "SaveChanges failed");
                 throw;
             }
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            _logger?.LogDebug("SaveChangesAsync called");
+            logger?.LogDebug("SaveChangesAsync called");
             try
             {
                 var result = await base.SaveChangesAsync(cancellationToken);
-                _logger?.LogInformation("SaveChangesAsync completed, {Count} entries written.", result);
+                logger?.LogInformation("SaveChangesAsync completed, {Count} entries written.", result);
                 return result;
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "SaveChangesAsync failed");
+                logger?.LogError(ex, "SaveChangesAsync failed");
                 throw;
             }
         }

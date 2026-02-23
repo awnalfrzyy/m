@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Asp.Versioning;
 using diggie_server.src.shop.features.product.get;
+using diggie_server.src.shop.features.product.get.admin;
+using diggie_server.src.shop.features.product.get.detail;
 using diggie_server.src.shop.features.product.create;
 using diggie_server.src.shop.features.product.update;
 using diggie_server.src.shop.features.product.delete;
@@ -11,18 +13,24 @@ using diggie_server.src.shop.features.product.delete;
 public class ProductController : ControllerBase
 {
     private readonly GetProduct getProduct;
+    private readonly GetProductDetail getProductDetail;
+    private readonly GetProductAdmin getProductAdmin;
     private readonly CreateProduct createProduct;
     private readonly UpdateProduct updateProduct;
     private readonly DeleteProduct deleteProduct;
 
     public ProductController(
         GetProduct getProduct,
+        GetProductDetail getProductDetail,
+        GetProductAdmin getProductAdmin,
         CreateProduct createProduct,
         UpdateProduct updateProduct,
         DeleteProduct deleteProduct
         )
     {
         this.getProduct = getProduct;
+        this.getProductDetail = getProductDetail;
+        this.getProductAdmin = getProductAdmin;
         this.createProduct = createProduct;
         this.updateProduct = updateProduct;
         this.deleteProduct = deleteProduct;
@@ -40,6 +48,20 @@ public class ProductController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var response = await getProduct.ExecuteAsync(id);
+        return Ok(response);
+    }
+
+    [HttpGet("a/{id}")]
+    public async Task<IActionResult> GetAllAdmin(Guid id)
+    {
+        var response = await getProductAdmin.ExecuteAsync(id);
+        return Ok(response);
+    }
+
+    [HttpGet("detail/{id}")]
+    public async Task<IActionResult> GetDetail(Guid id)
+    {
+        var response = await getProductDetail.ExecuteAsync(id);
         return Ok(response);
     }
 
